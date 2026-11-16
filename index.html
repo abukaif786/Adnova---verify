@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0B3F46">
-<title>AdNova Network - Email Verification</title>
+<title>AdNova Network</title>
 
 <style>
 :root {
@@ -16,7 +16,6 @@
   --soft:#DDF1F2;
 }
 * { box-sizing:border-box; }
-
 body {
   margin:0;
   font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -27,7 +26,6 @@ body {
   flex-direction:column;
   align-items:center;
 }
-
 .wrap {
   width:100%;
   max-width:440px;
@@ -35,7 +33,6 @@ body {
   text-align:center;
   flex:1;
 }
-
 .brand {
   display:flex;
   align-items:center;
@@ -43,7 +40,6 @@ body {
   gap:10px;
   margin-bottom:14px;
 }
-
 .brand b {
   display:block;
   font-size:30px;
@@ -51,7 +47,6 @@ body {
   letter-spacing:-.5px;
   line-height:1;
 }
-
 .brand small {
   display:block;
   font-size:10px;
@@ -60,19 +55,16 @@ body {
   text-align:left;
   margin-top:3px;
 }
-
 h1 {
   font-size:26px;
   margin:6px 0;
   color:var(--deep);
 }
-
 p {
   color:var(--mute);
   line-height:1.5;
   margin:0 0 18px;
 }
-
 button {
   width:100%;
   border:0;
@@ -86,12 +78,10 @@ button {
   box-shadow:0 8px 18px rgba(15,139,147,.28);
   cursor:pointer;
 }
-
 button:disabled {
   opacity:.55;
   cursor:default;
 }
-
 input {
   width:100%;
   padding:15px;
@@ -100,7 +90,6 @@ input {
   font-size:16px;
   margin-bottom:14px;
 }
-
 .msg {
   border-radius:12px;
   padding:12px 14px;
@@ -109,17 +98,8 @@ input {
   text-align:left;
   line-height:1.5;
 }
-
-.ok {
-  background:#E3F6EC;
-  color:#0E6B45;
-}
-
-.bad {
-  background:#FDECEC;
-  color:#B03030;
-}
-
+.ok { background:#E3F6EC; color:#0E6B45; }
+.bad { background:#FDECEC; color:#B03030; }
 .feat {
   display:flex;
   justify-content:space-around;
@@ -127,9 +107,7 @@ input {
   font-size:12px;
   color:var(--mute);
 }
-
 .feat div { width:30%; }
-
 .dot {
   width:44px;
   height:44px;
@@ -141,7 +119,6 @@ input {
   justify-content:center;
   font-size:19px;
 }
-
 footer {
   width:100%;
   margin-top:34px;
@@ -149,11 +126,8 @@ footer {
   text-align:center;
   color:#fff;
   font-size:12px;
-  background:linear-gradient(
-    180deg,#fff 0%,#BFE3E5 30%,#0F8B93 100%
-  );
+  background:linear-gradient(180deg,#fff 0%,#BFE3E5 30%,#0F8B93 100%);
 }
-
 [hidden] { display:none!important; }
 </style>
 </head>
@@ -174,7 +148,6 @@ footer {
             fill="url(#g)"/>
       <circle cx="22" cy="33" r="4.2" fill="#fff"/>
     </svg>
-
     <div>
       <b>adnova</b>
       <small>NETWORK</small>
@@ -196,11 +169,8 @@ footer {
           stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
 
-  <h1 id="title">Verify Email Address</h1>
-
-  <p id="sub">
-    Secure your account by verifying your email address.
-  </p>
+  <h1 id="title">AdNova Network</h1>
+  <p id="sub">Secure email verification and account recovery.</p>
 
   <div id="msg" class="msg" hidden></div>
 
@@ -210,21 +180,12 @@ footer {
       autocomplete="new-password">
   </div>
 
-  <button id="go">COMPLETE VERIFICATION</button>
+  <button id="go" hidden>COMPLETE VERIFICATION</button>
 
   <div class="feat">
-    <div>
-      <div class="dot">🛡️</div>
-      Secure<br>Account
-    </div>
-    <div>
-      <div class="dot">⚡</div>
-      Access<br>Full Features
-    </div>
-    <div>
-      <div class="dot">🔒</div>
-      Stay<br>Connected
-    </div>
+    <div><div class="dot">🛡️</div>Secure<br>Account</div>
+    <div><div class="dot">⚡</div>Access<br>Full Features</div>
+    <div><div class="dot">🔒</div>Stay<br>Connected</div>
   </div>
 
 </div>
@@ -241,7 +202,7 @@ footer {
 (function () {
   "use strict";
 
-  // AdNova Network Firebase Configuration
+  // Correct AdNova Firebase Configuration
   var firebaseConfig = {
     apiKey: "AIzaSyCZLrlgKpRuStoXaFPb4wVCMdqhHol34IE",
     authDomain: "adnova-network.firebaseapp.com",
@@ -253,18 +214,14 @@ footer {
     measurementId: "G-5KC98RB5LX"
   };
 
-  var q = new URLSearchParams(window.location.search);
-  var mode = q.get("mode");
-  var code = q.get("oobCode");
-
-  var $ = function (id) {
+  var $ = function(id) {
     return document.getElementById(id);
   };
 
-  var go = $("go");
   var title = $("title");
   var sub = $("sub");
   var msg = $("msg");
+  var go = $("go");
   var pwbox = $("pwbox");
   var pw = $("pw");
 
@@ -274,22 +231,48 @@ footer {
     msg.textContent = text;
   }
 
-  function fail(error, disable) {
-    var c = error && error.code ? error.code : "";
+  function showError(error) {
+    var code = error && error.code ? error.code : "";
 
-    if (c === "auth/expired-action-code") {
-      say("This link has expired. Please request a new verification email.");
-    } else if (c === "auth/invalid-action-code") {
-      say("This link is invalid or has already been used. If already verified, return to the app.");
-    } else if (c === "auth/user-disabled") {
-      say("This account has been disabled. Please contact support.");
-    } else if (c === "auth/network-request-failed") {
-      say("Network error. Check your internet connection and try again.");
+    if (code === "auth/expired-action-code") {
+      say("This link has expired. Please request a new email.", false);
+    } else if (code === "auth/invalid-action-code") {
+      say("This link is invalid or already used. Please request a new link if needed.", false);
+    } else if (code === "auth/user-disabled") {
+      say("This account has been disabled. Contact support.", false);
+    } else if (code === "auth/network-request-failed") {
+      say("Network error. Check your internet connection.", false);
+    } else if (code === "auth/invalid-api-key") {
+      say("Firebase API configuration is incorrect.", false);
+    } else if (code === "auth/unauthorized-domain") {
+      say("This website domain is not authorized in Firebase.", false);
     } else {
-      say("Something went wrong. Please try again.");
+      console.error("AdNova Firebase error:", code, error);
+      say("Something went wrong. Please try again.", false);
     }
 
-    go.disabled = !!disable;
+    go.disabled = false;
+  }
+
+  // Read Firebase action parameters
+  var params = new URLSearchParams(window.location.search);
+
+  var mode = params.get("mode");
+  var code = params.get("oobCode");
+  var incomingApiKey = params.get("apiKey");
+
+  // Also support parameters placed in URL hash
+  if (!mode || !code) {
+    var hash = window.location.hash || "";
+    var hashQuery = hash.indexOf("?") >= 0
+      ? hash.substring(hash.indexOf("?") + 1)
+      : hash.replace(/^#/, "");
+
+    var hashParams = new URLSearchParams(hashQuery);
+
+    mode = mode || hashParams.get("mode");
+    code = code || hashParams.get("oobCode");
+    incomingApiKey = incomingApiKey || hashParams.get("apiKey");
   }
 
   // Initialize Firebase
@@ -297,21 +280,29 @@ footer {
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
-  } catch (e) {
+  } catch (error) {
     title.textContent = "Configuration Error";
-    sub.textContent = "Unable to initialize AdNova. Please try again later.";
+    sub.textContent = "Unable to initialize AdNova Firebase.";
     say("Firebase initialization failed.", false);
-    go.hidden = true;
     return;
   }
 
   var auth = firebase.auth();
 
-  // Check incoming Firebase action link
-  if (!code || !mode) {
-    title.textContent = "Link not valid";
-    sub.textContent = "Please open the original link from your email again.";
-    go.hidden = true;
+  // Check that the link belongs to this Firebase project
+  if (incomingApiKey && incomingApiKey !== firebaseConfig.apiKey) {
+    title.textContent = "Wrong Firebase Project";
+    sub.textContent = "This verification link does not belong to AdNova Network.";
+    say("Please request a new verification email from AdNova.", false);
+    return;
+  }
+
+  // No action parameters means this is a normal website visit
+  if (!mode || !code) {
+    title.textContent = "AdNova Network";
+    sub.textContent =
+      "Please open the verification or password reset link sent to your email.";
+    say("No verification link was detected. Open the original link from your email.", false);
     return;
   }
 
@@ -319,13 +310,18 @@ footer {
   if (mode === "verifyEmail") {
 
     title.textContent = "Verify Email Address";
-    sub.textContent = "Tap below to securely verify your AdNova account.";
+    sub.textContent =
+      "Tap the button below to verify your AdNova email address.";
 
-    go.onclick = function () {
+    go.hidden = false;
+    go.textContent = "COMPLETE VERIFICATION";
+
+    go.onclick = function() {
       go.disabled = true;
+      say("Verifying your email address...", true);
 
       auth.applyActionCode(code)
-        .then(function () {
+        .then(function() {
           title.textContent = "Email Verified!";
           sub.textContent =
             "Your email has been successfully verified. Return to the AdNova Portal app and tap 'I have verified my email'.";
@@ -333,33 +329,33 @@ footer {
           say("✓ Your AdNova email address is now verified.", true);
           go.hidden = true;
         })
-        .catch(function (e) {
-          fail(e, false);
-        });
+        .catch(showError);
     };
-
   }
 
   // PASSWORD RESET
   else if (mode === "resetPassword") {
 
     title.textContent = "Set a New Password";
-    sub.textContent = "Create a secure password for your AdNova account.";
+    sub.textContent =
+      "Create a secure password for your AdNova account.";
 
     pwbox.hidden = false;
+    go.hidden = false;
     go.textContent = "SAVE NEW PASSWORD";
     go.disabled = true;
 
     auth.verifyPasswordResetCode(code)
-      .then(function (email) {
+      .then(function(email) {
         sub.textContent = "Choose a new password for " + email + ".";
         go.disabled = false;
       })
-      .catch(function (e) {
-        fail(e, true);
+      .catch(function(error) {
+        showError(error);
+        go.disabled = true;
       });
 
-    go.onclick = function () {
+    go.onclick = function() {
 
       if (pw.value.length < 6) {
         say("Password must be at least 6 characters.", false);
@@ -367,29 +363,29 @@ footer {
       }
 
       go.disabled = true;
+      say("Updating your password...", true);
 
       auth.confirmPasswordReset(code, pw.value)
-        .then(function () {
+        .then(function() {
           title.textContent = "Password Changed!";
-          sub.textContent = "Your password has been updated. Open the AdNova app and log in.";
+          sub.textContent =
+            "Your password has been successfully updated. Open AdNova and log in.";
 
           pwbox.hidden = true;
           go.hidden = true;
 
           say("✓ Your password was successfully changed.", true);
         })
-        .catch(function (e) {
-          fail(e, false);
-        });
+        .catch(showError);
     };
-
   }
 
-  // OTHER ACTIONS
+  // Unsupported action
   else {
     title.textContent = "Link Not Supported";
-    sub.textContent = "This action link is not supported by AdNova.";
-    go.hidden = true;
+    sub.textContent =
+      "This action is not supported by AdNova. Please use the correct email link.";
+    say("Unsupported Firebase action: " + mode, false);
   }
 
 })();
