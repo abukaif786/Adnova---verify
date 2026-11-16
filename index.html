@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AdNova Network</title>
+<style>
+  :root{--teal:#0F8B93;--deep:#0B3F46;--ink:#10262B;--mute:#5A6F75;--soft:#DDF1F2}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+  .wrap{width:100%;max-width:440px;padding:28px 22px 0;text-align:center;flex:1}
+  .brand{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px}
+  .brand b{display:block;font-size:30px;color:var(--deep);letter-spacing:-.5px;line-height:1}
+  .brand small{display:block;font-size:10px;letter-spacing:5px;color:var(--mute);text-align:left;margin-top:3px}
+  h1{font-size:26px;margin:6px 0;color:var(--deep)}
+  p{color:var(--mute);line-height:1.5;margin:0 0 18px}
+  button{width:100%;border:0;border-radius:40px;padding:17px;font-size:15px;font-weight:700;letter-spacing:.5px;color:#fff;background:linear-gradient(90deg,#0B7F86,#14A3A8);box-shadow:0 8px 18px rgba(15,139,147,.28);cursor:pointer}
+  button:disabled{opacity:.55;cursor:default}
+  input{width:100%;padding:15px;border:1px solid #CFE3E5;border-radius:12px;font-size:16px;margin-bottom:14px}
+  .msg{border-radius:12px;padding:12px 14px;margin:0 0 16px;font-size:14px;text-align:left}
+  .ok{background:#E3F6EC;color:#0E6B45}
+  .bad{background:#FDECEC;color:#B03030}
+  .feat{display:flex;justify-content:space-around;margin:30px 0 10px;font-size:12px;color:var(--mute)}
+  .feat div{width:30%}
+  .dot{width:44px;height:44px;border-radius:50%;background:var(--soft);margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:19px}
+  footer{width:100%;margin-top:34px;padding:50px 20px 22px;text-align:center;color:#fff;font-size:12px;background:linear-gradient(180deg,#fff 0%,#BFE3E5 30%,#0F8B93 100%)}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <svg width="46" height="46" viewBox="0 0 44 44" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1FB5AE"/><stop offset="1" stop-color="#0B6F77"/></linearGradient></defs><path d="M22 3 L41 41 H30 L22 24 L14 41 H3 Z" fill="url(#g)"/><circle cx="22" cy="33" r="4.2" fill="#fff"/></svg>
+    <div><b>adnova</b><small>NETWORK</small></div>
+  </div>
+  <svg width="210" height="150" viewBox="0 0 210 150" aria-hidden="true"><ellipse cx="105" cy="80" rx="86" ry="58" fill="#E6F6F6"/><rect x="45" y="48" width="120" height="82" rx="12" fill="#14A3A8"/><path d="M45 56 L105 100 L165 56 V130 H45Z" fill="#0F8B93"/><rect x="62" y="22" width="86" height="64" rx="8" fill="#fff" stroke="#CFE3E5"/><rect x="74" y="36" width="50" height="6" rx="3" fill="#DDF1F2"/><rect x="74" y="50" width="62" height="6" rx="3" fill="#DDF1F2"/><circle cx="130" cy="92" r="22" fill="#0B6F77" stroke="#fff" stroke-width="4"/><path d="M120 92 l7 7 l13 -14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <h1 id="title">Verify Email Address</h1>
+  <p id="sub">Secure your account by verifying your email address.</p>
+  <div id="msg" class="msg" hidden></div>
+  <div id="pwbox" hidden><input id="pw" type="password" placeholder="New password (min 6 characters)" autocomplete="new-password"></div>
+  <button id="go">COMPLETE VERIFICATION</button>
+  <div class="feat">
+    <div><div class="dot">🛡️</div>Secure<br>Account</div>
+    <div><div class="dot">⚡</div>Access<br>Full Features</div>
+    <div><div class="dot">🔒</div>Stay<br>Connected</div>
+  </div>
+</div>
+<footer>adnova-network<br>Smarter Ads. Bigger Opportunities.</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+(function () {
+  var KEY = "AIzaSyDAXsQR48PWI-VYAdpHJtOpKRxJ1Uc-2WI";
+  var q = new URLSearchParams(location.search), mode = q.get("mode"), code = q.get("oobCode");
+  var $ = function (i) { return document.getElementById(i); };
+  var go = $("go"), title = $("title"), sub = $("sub"), msg = $("msg"), pwbox = $("pwbox"), pw = $("pw");
+
+  function say(text, ok) { msg.hidden = false; msg.className = "msg " + (ok ? "ok" : "bad"); msg.textContent = text; }
+  function fail(e, keepOff) {
+    var c = (e && e.code) || "";
+    if (c === "auth/expired-action-code") say("This link has expired. Open the AdNova app and ask for a new link.");
+    else if (c === "auth/invalid-action-code") say("This link is not valid or was already used. If you already verified, just open the app.");
+    else say("Something went wrong. Please try again.");
+    go.disabled = !!keepOff;
+  }
+
+  if (!code || !mode) {
+    title.textContent = "Link not valid"; sub.textContent = "Please open the link from your email again.";
+    go.hidden = true; return;
+  }
+  try { firebase.initializeApp({ apiKey: KEY }); } catch (e) {}
+  var auth = firebase.auth();
+
+  if (mode === "verifyEmail") {
+    go.onclick = function () {
+      go.disabled = true;
+      auth.applyActionCode(code).then(function () {
+        title.textContent = "Email verified";
+        sub.textContent = "Now go back to the AdNova Portal app and tap 'I have verified my email'.";
+        go.hidden = true; say("Your email address is verified.", true);
+      }).catch(function (e) { fail(e, false); });
+    };
+  } else if (mode === "resetPassword") {
+    title.textContent = "Set a new password";
+    sub.textContent = "Choose a new password for your AdNova account.";
+    pwbox.hidden = false; go.textContent = "SAVE NEW PASSWORD"; go.disabled = true;
+    auth.verifyPasswordResetCode(code).then(function (email) {
+      sub.textContent = "Choose a new password for " + email + "."; go.disabled = false;
+    }).catch(function (e) { fail(e, true); });
+    go.onclick = function () {
+      if (pw.value.length < 6) { say("Password must be at least 6 characters."); return; }
+      go.disabled = true;
+      auth.confirmPasswordReset(code, pw.value).then(function () {
+        title.textContent = "Password changed";
+        sub.textContent = "Open the AdNova app and log in with your new password.";
+        pwbox.hidden = true; go.hidden = true; say("Your password was changed.", true);
+      }).catch(function (e) { fail(e, false); });
+    };
+  } else {
+    title.textContent = "Link not supported"; sub.textContent = "Please use the AdNova app."; go.hidden = true;
+  }
+})();
+</script>
+</body>
+</html>
